@@ -1,3 +1,5 @@
+#!./venv/Scripts/python
+
 import io
 import os
 import sys
@@ -8,7 +10,6 @@ from pathlib import Path as OSPath
 import click
 import numpy as np
 from PIL import Image
-from skimage.measure import label
 
 from Common.Timer import Timer
 from TermUtils.term import *
@@ -20,6 +21,9 @@ info_format = Format(fg=FG.BLUE)
 error_format = Format(fg=FG.YEL, bg=BG.RED, style=STYLE.BOLD)
 ok_format = Format(fg=FG.GREEN, style=STYLE.ITALIC)
 inverted_format = Format(style=STYLE.REVERSE)
+
+
+#---------------------------------------------------------------------------------------------------
 
 
 @dataclass
@@ -87,6 +91,9 @@ def np_moore_neighbors(matrix: np.ndarray, x: int, y: int):
 
     return neighborhood
     
+
+#---------------------------------------------------------------------------------------------------
+
 
 class Color:
     """
@@ -428,8 +435,11 @@ class SVG:
         svg += '</svg>'
         
         return svg
-    
+   
 
+ #---------------------------------------------------------------------------------------------------
+ 
+ 
 def get_distinct_color_regions(img: Image):
     img_matrix = np.array(img)
     
@@ -448,11 +458,54 @@ def get_distinct_color_regions(img: Image):
     return list(regions.values())
 
 
+def find_connected_neumann_regions(bitmask: np.ndarray):
+    """
+    - Acts as scikit (skimage) measurement.label function with connectivity=1
+    
+    See
+    ---
+    https://scikit-image.org/docs/stable/api/skimage.measure.html#skimage.measure.label
+    """
+    regions = np.zeros_like(bitmask)
+    region_id = 1
+    stack = []
+
+    rows, cols = bitmask.shape
+
+    for y in range(rows):
+        for x in range(cols):
+            if bitmask[y, x] == 1 and regions[y, x] == 0:
+                stack.append((x, y))
+
+                while stack:
+                    x, y = stack.pop()
+                    if regions[y, x] != 0:
+                        continue
+                    regions[y, x] = region_id
+                    neighbors = np_neumann_neighbors(bitmask, x, y)
+                    
+                    if neighbors.top == 1:
+                        stack.append((x, y - 1))
+                        
+                    if neighbors.right == 1:
+                        stack.append((x + 1, y))
+                        
+                    if neighbors.bottom == 1:
+                        stack.append((x, y + 1))
+                        
+                    if neighbors.left == 1:
+                        stack.append((x - 1, y))
+
+                region_id += 1
+
+    return regions
+
+
 def split_into_clusters(region: Color2DRegion):
     """
     - Cluster - connected area of pixels according to the Von Neumann neighborhood
     """
-    cluster_matrix = label(region.bitmask, connectivity=1)
+    cluster_matrix = find_connected_neumann_regions(region.bitmask)
     
     known_clusters = set()
     clusters: dict[Color2DRegion] = {}
@@ -541,8 +594,12 @@ def extract_node_loops(node_grid: NodeGrid2D):
     
     return node_loops
 
+
+#---------------------------------------------------------------------------------------------------
+
+
 @click.command()
-@click.option("--scale", default=1)
+@click.option("-s", "--scale", default=1, help="Apply scale to all resulted SVGs, images will not be scaled")
 def main(scale):   
     """
     This script pixel perfectly traces pixel sprites to SVG vector images
@@ -553,6 +610,13 @@ def main(scale):
     os.chdir(APP)
     os.makedirs("in", exist_ok=True)
     os.makedirs("out", exist_ok=True)
+    
+    if scale < 1:
+        writef(":: Scale is too low ::", error_format)
+        write()
+        input("Press Enter to exit...")
+        Scr.reset_mode()
+        sys.exit(1)
     
     input_files = set(os.listdir('./in'))
     png_files = set(filter(lambda f: 
@@ -583,7 +647,7 @@ def main(scale):
                 with open(f"./in/{file}", 'rb') as file_img:
                     image = Image.open(io.BytesIO(file_img.read()))
             except Exception as e:
-                writef(f"[File error: {e}]", error_format)
+                writef(f":: File error: {e} ::", error_format)
                 write()
                 write(f"{ffg('>> SKIP', FG.RED)}\n")
                 continue
@@ -629,7 +693,7 @@ def main(scale):
                 with open(f'./out/{filename}', 'w') as svg_file:
                     write("\t┌ Saving...\n")
                     svg_file.write(svg.build_svg())
-                    writef(f"\t└ Saved as {fstyle(filename, STYLE.BOLD)} ☑\n", ok_format)
+                    writef(f"\t└ Saved as {fstyle(filename, STYLE.BOLD)} [+]\n", ok_format)
                                 
                 write()
                 
@@ -638,7 +702,7 @@ def main(scale):
     input("Press Enter to exit...")
     
 if __name__ == '__main__':
-    os.system("color")
+    os.system("color") #! NOT TESTED ON LINUX
     try:
         main()
     except Exception as e:
