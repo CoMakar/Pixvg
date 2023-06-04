@@ -1,0 +1,9 @@
+**/venv/
+**/__pycache__/
+*.spec
+**/build/
+**/dist/
+**/in/
+**/out/
+/_distrib
+build.bat
