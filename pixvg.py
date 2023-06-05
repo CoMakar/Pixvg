@@ -440,7 +440,7 @@ class SVG:
  #---------------------------------------------------------------------------------------------------
  
  
-def get_distinct_color_regions(img: Image):
+def split_into_color_regions(img: Image):
     img_matrix = np.array(img)
     
     known_colors = set()
@@ -624,8 +624,8 @@ def main(scale):
     other_files = input_files - png_files
     
     if len(png_files) == 0:
-        set_format(error_format)
-        write("No input files!\n")
+        writef(":: No input files! ::", error_format)
+        write()
         input("Press Enter to exit...")
         Scr.reset_mode()
         sys.exit(1)
@@ -642,6 +642,8 @@ def main(scale):
             image: Image = None
             
             write(f"{fstyle(':: filename:', STYLE.BOLD)} {ffg(file, FG.MAGNT)}\n")
+                        
+            #---------------------------------------------------------------------------
             
             try:
                 with open(f"./in/{file}", 'rb') as file_img:
@@ -654,19 +656,30 @@ def main(scale):
                    
             image = image.convert("RGBA")   
                          
-            width, height = image.size       
+            width, height = image.size    
+            
+            if width > 512 or height > 512:
+                writef(f":: Image too big {width}x{height} ::", error_format)
+                write()
+                write(f"{ffg('>> SKIP', FG.RED)}\n")
+                continue
+            
+            #---------------------------------------------------------------------------
                 
             write(f"\timage size: {ffg(width, FG.BLUE)}x{ffg(height, FG.BLUE)}\n")
             write(f"\tscale: {ffg(scale, FG.BLUE)}\n") 
             
             write()
-                
+            
+            #---------------------------------------------------------------------------
+              
+              
             with Timer(fstyle(file, STYLE.BOLD)) as timer:  
                 svg = SVG(*image.size, scale=scale)
                 
                 timer.tic()
-                write(f"\t┌ Splitting image into distinct {ffg('color regions', FG.CYAN)}...\n")
-                color_regions: list[Color2DRegion] = [r for r in get_distinct_color_regions(image) if r.color.a == 255]
+                write(f"\t┌ Splitting image into {ffg('color regions', FG.CYAN)}...\n")
+                color_regions: list[Color2DRegion] = [r for r in split_into_color_regions(image) if r.color.a == 255]
                 write(f"\t│ {ffg(len(color_regions), FG.CYAN)} color region\s\n")
                 writef(f"\t└ Done: {timer.toc():.2f}s\n", ok_format)
                 
