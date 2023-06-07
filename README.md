@@ -1,7 +1,9 @@
 # PixVG
 
-<img title="" src="./examples/Logo.png" alt="Logo.png" data-align="center" width="284">
-
+<p align="center">
+  <img title="PixVG" src="./examples/Logo.png" alt="Logo.png">
+</p>
+  
 # About
 
 **PixVG** is a small **CLI utility** for tracing pixel-style arts/sprites/logos/icons to SVG. It optimizes the resulted SVG, so every connected color region *(Connected in terms of Von Neumann neighborhood or 4-neighborhood)* will be separated from others.
@@ -48,8 +50,16 @@ _Builded with python 3.11.1 on Win10 x64 with pyinstaller_
 
 1. Console output:
 
-<img title="" src="./examples/cmd.png" alt="cmd.png" data-align="center" width="467" style="border-radius: 32px">
+<p align="center">
+  <img title="Terminal output" src="./examples/cmd.png" alt="cmd.png">
+</p>
+ 
+---
 
 2. Comparison with Aseprite:
 
-<img title="" src="./examples/png_to_svg.png" alt="png_to_svg.png" width="648" data-align="center" style="border-radius: 32px">
+<p align="center">
+  <img title="Aseprite comparison" src="./examples/png_to_svg.png" alt="png_to_svg.png">
+</p>
+
+---
