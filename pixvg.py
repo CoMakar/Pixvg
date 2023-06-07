@@ -22,6 +22,9 @@ error_format = Format(fg=FG.YEL, bg=BG.RED, style=STYLE.BOLD)
 ok_format = Format(fg=FG.GREEN, style=STYLE.ITALIC)
 inverted_format = Format(style=STYLE.REVERSE)
 
+MAX_SIZE = 512
+ALLOWED_TYPES = ('.png')
+
 
 #---------------------------------------------------------------------------------------------------
 
@@ -620,7 +623,7 @@ def main(scale):
     
     input_files = set(os.listdir('./in'))
     png_files = set(filter(lambda f: 
-        f.endswith(".png"), input_files))
+        f.endswith(ALLOWED_TYPES), input_files))
     other_files = input_files - png_files
     
     if len(png_files) == 0:
@@ -658,8 +661,8 @@ def main(scale):
                          
             width, height = image.size    
             
-            if width > 512 or height > 512:
-                writef(f":: Image too big {width}x{height} ::", error_format)
+            if width > MAX_SIZE or height > MAX_SIZE:
+                writef(f":: Image is too big {width}x{height}; max size: {MAX_SIZE} ::", error_format)
                 write()
                 write(f"{ffg('>> SKIP', FG.RED)}\n")
                 continue
