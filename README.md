@@ -23,13 +23,16 @@ Hope it will help you!
 - <./out> - output folder (Created automatically).
 
 > **Note**
+> 
 > Transparent pixels will be ignored.
+> 
 > Max image size 512x512 px (Softlock, see pixvg.py line: 661 for ver1.0).
+> 
 > Supports only .png files (Softlock, see pixvg.py line: 623 for ver1.0).
 
 
 
-## Dependency
+### Dependency
 
 1. numpy;
 2. pillow (PIL);
