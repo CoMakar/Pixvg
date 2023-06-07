@@ -51,7 +51,7 @@ _Builded with python 3.11.1 on Win10 x64 with pyinstaller_
 1. Console output:
 
 <p align="center">
-  <img title="Terminal output" src="./examples/cmd.png" alt="cmd.png">
+  <img title="Terminal output" src="./examples/cmd.png" alt="cmd.png" width="600px">
 </p>
  
 ---
@@ -59,7 +59,7 @@ _Builded with python 3.11.1 on Win10 x64 with pyinstaller_
 2. Comparison with Aseprite:
 
 <p align="center">
-  <img title="Aseprite comparison" src="./examples/png_to_svg.png" alt="png_to_svg.png">
+  <img title="Aseprite comparison" src="./examples/png_to_svg.png" alt="png_to_svg.png" width="600px">
 </p>
 
 ---
