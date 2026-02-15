@@ -1,0 +1,17 @@
+[project]
+name = "pixvg"
+version = "0.1.0"
+description = "Pixel art to SVG tracing tool"
+requires-python = ">=3.13"
+dependencies = [
+    "click>=8.3.1",
+    "numpy>=2.4.2",
+    "pillow>=12.1.1",
+    "rich>=14.3.2",
+    "ruff>=0.15.0",
+]
+
+[dependency-groups]
+dev = [
+    "pyinstaller>=6.18.0",
+]

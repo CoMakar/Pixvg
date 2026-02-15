@@ -1,65 +1,75 @@
 # PixVG
 
 <p align="center">
-  <img title="PixVG" src="./examples/Logo.png" alt="Logo.png">
+  <img title="PixVG" src="./examples/logo.png" alt="logo">
 </p>
-  
-# About
 
-**PixVG** is a small **CLI utility** for tracing pixel-style arts/sprites/logos/icons to SVG. It optimizes the resulted SVG, so every connected color region *(Connected in terms of Von Neumann neighborhood or 4-neighborhood)* will be separated from others.
+## About
 
-Its intended to be used in **pixel-style (web) design** , because it works very well with duotone logos, icons and other elements where you can find farily large *(For pixel art)* areas of connected colors. Of course, You can easily colorize duotone SVG later, for example, using CSS. So it is flexible approach. Scaling pixel-style stuff is quite a problem, but SVG is easy scaleable.
+**PixVG** is a small **CLI utility** for tracing pixel-style art/sprites/logos/icons to SVG. It optimizes the resulting
+SVG so that every connected color region *(connected in terms of Von Neumann neighborhood or 4-neighborhood)* is
+separated from others.
 
-As for real pixel arts with a lot of colors and big amount of small pixel clusters PixVG will result pretty heavy SVG files. It is **NOT** magical tool.
+It's intended to be used in **pixel-style (web) design**, because it works very well with duotone logos, icons, and
+other elements where you can find fairly large areas of connected colors. You can easily colorize
+duotone SVGs later. Scaling pixel-style graphics is quite a problem, but SVG is easily scalable.
 
-Hope it will help you!
+**Note:** For input with many colors and a large number of small pixel clusters, PixVG will produce fairly
+heavy SVG files. It is **NOT** a magical tool.
 
+Hope it helps you!
 
+## Features
 
-# Ver 1.0
+- **Pixel-perfect tracing**: Converts pixel art to optimized SVG paths
+- **Color region separation**: Each connected color region becomes a separate path
+- **Cluster detection**: Automatically separates disconnected regions of the same color
+- **Path optimization**: Reduces redundant nodes for cleaner SVG output
+- **Scalable output**: Apply scaling factor to generated SVGs
 
-- Supports [-s int] [--scale int] command line arguemnt: to apply scale to resulted SVGs.
+## Installation
 
-- <./in> - input folder (Created automatically);
+**PixVG** is distributed as a standalone executable built with PyInstaller.
 
-- <./out> - output folder (Created automatically).
+### Download Pre-built Binary
 
-> **Note**
-> 
-> Transparent pixels will be ignored.
-> 
-> Max image size 512x512 px (Softlock, see pixvg.py line: 661 for ver1.0).
-> 
-> Supports only .png files (Softlock, see pixvg.py line: 623 for ver1.0).
+Download the latest release from the [Releases](https://github.com/your-repo/pixvg/releases) page.
 
+## Usage
 
+```bash
+pixvg.exe [OPTIONS]
+```
 
-### Dependency
+### Options
 
-1. numpy;
-2. pillow (PIL);
-3. click.
+| Option                             | Type     | Default | Description                                 |
+|------------------------------------|----------|---------|---------------------------------------------|
+| `-i`, `--input`                    | Path     | `./in`  | Input directory containing PNG files        |
+| `-o`, `--output`                   | Path     | `./out` | Output directory for SVG files              |
+| `-s`, `--scale`                    | Int (≥1) | `1`     | Scale factor for output SVGs                |
+| `-f`, `--force`                    | Flag     | `False` | Force processing large images/many colors   |
+| `--split-regions/--remain-regions` | Flag     | `True`  | Split color regions into connected clusters |
 
+## How It Works
 
+1. **Color Region Extraction**: Analyzes the input PNG and identifies unique colors
+2. **Cluster Detection**: Separates disconnected regions of the same color
+3. **Edge Tracing**: Traces the boundary of each color cluster
+4. **Path Optimization**: Removes redundant nodes from traced paths
+5. **SVG Generation**: Constructs optimized SVG with separate paths per cluster
 
-_Builded with python 3.11.1 on Win10 x64 with pyinstaller_
+## Safety
 
+- **Max image size**: 512×512 pixels (bypass with `--force`)
+- **Max colors**: 128 unique colors (bypass with `--force`)
+- **Supported formats**: PNG only
+- **Transparency**: Only fully opaque pixels are traced
 
+## Examples
 
-# Examples
-
-1. Console output:
+### 1. Comparison with Aseprite
 
 <p align="center">
-  <img title="Terminal output" src="./examples/cmd.png" alt="cmd.png">
+  <img title="Aseprite comparison" src="./examples/comparison.png" alt="comparison">
 </p>
- 
----
-
-2. Comparison with Aseprite:
-
-<p align="center">
-  <img title="Aseprite comparison" src="./examples/png_to_svg.png" alt="png_to_svg.png">
-</p>
-
----
